@@ -74,6 +74,8 @@ setup(
     ],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=[
+        'click',
+        'click-log',
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
     extras_require={
@@ -83,7 +85,9 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'erpbrasil.edoc.gen = erpbrasil.edoc.gen.cli:main',
+            'erpbrasil-edoc-gen = erpbrasil.edoc.gen.cli:main',
+            'erpbrasil-edoc-gen-download-schema = '
+            'erpbrasil.edoc.gen.download_schema:download_schema',
         ]
     },
 )
