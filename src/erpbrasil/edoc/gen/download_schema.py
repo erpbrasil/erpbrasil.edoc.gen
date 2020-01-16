@@ -5,11 +5,13 @@ import cgi
 import click
 import os
 import shutil
+import sys
 
 
 @click.command()
 @click.option('-n', '--service_name', help="Service Name")
 @click.option('-v', '--version', help="Version Name")
+@click.option('-f', '--force', is_flag=True, help="force")
 @click.option('-u', '--url', multiple=True, help="List of URLs")
 @click.option('-t', 'tmp_dir', required=False, default='/tmp/',
               type=click.Path(dir_okay=True, file_okay=False, exists=True),
@@ -63,3 +65,7 @@ def download_schema(service_name, version, url, tmp_dir):
                 destination_extract_dir, str(filename).split('/')[-1]
             )
             shutil.move(filename, destination_extract_file)
+
+
+if __name__ == "__main__":
+    sys.exit(download_schema())

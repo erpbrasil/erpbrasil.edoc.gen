@@ -76,6 +76,7 @@ setup(
     install_requires=[
         'click',
         'click-log',
+        'generateDS',
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
     extras_require={

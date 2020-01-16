@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 import click
 import os
@@ -6,7 +7,7 @@ from generateds.odoo import gends_run_gen_odoo
 from generateds import generateDS
 
 
-def prepare(service_name, version, dest_dir):
+def prepare(service_name, version, dest_dir, force):
     """ Create the module l10n_br_spec_<service_name> with the structure:
     l10n_br_spec_<service_name>
     |-__manifest__.py
@@ -23,7 +24,8 @@ def prepare(service_name, version, dest_dir):
     output_path = dest_dir_path + 'models/' + version
     security_path = dest_dir_path + 'security/%s' % version
 
-    # shutil.rmtree(dest_dir_path)
+    if force and os.path.isdir(dest_dir_path):
+        shutil.rmtree(dest_dir_path)
 
     os.makedirs(output_path, exist_ok=True)
     output_dir = open(output_path + '/__init__.py', 'w+')
@@ -109,21 +111,23 @@ def generate_file(service_name, version, output_dir, module_name, filename):
 @click.command()
 @click.option('-n', '--service_name', help="Service Name")
 @click.option('-v', '--version', help="Version Name")
-@click.option('-s', '--schema_dir', help="Schema dir")
-@click.option('-d', '--dest_dir', required=False, default='/tmp/',
+@click.option('-s', '--schema_dir', help="Schema dir", default='/tmp/schema')
+@click.option('-f', '--force', is_flag=True, help="force")
+@click.option('-d', '--dest_dir', required=False, default='/tmp/generated_odoo',
               type=click.Path(dir_okay=True, file_okay=False, exists=True),
               multiple=False, help="Directory where the files will be extract")
-def generate_odoo(service_name, version, schema_dir, dest_dir):
+def generate_odoo(service_name, version, schema_dir, force, dest_dir):
     """ Create a module in the path dest_dir and generates the odoo class for
     each xsd found in the path schema_dir
 
     :param service_name: for example nfe
     :param version: v4.00
     :param schema_dir: /tmp/schemas
+    :param force: flag
     :param dest_dir: /tmp/generated_specs
     :return:
     """
-    prepare(service_name, version, dest_dir)
+    prepare(service_name, version, dest_dir, force)
 
     output_dir = os.path.join(
         dest_dir, 'l10n_br_spec_%s/models/%s' % (service_name, version)

@@ -1,5 +1,5 @@
 """
-Entrypoint module, in case you use `python -merpbrasil.edoc.gen`.
+Entrypoint module, in case you use `python -m erpbrasil.edoc.gen`.
 
 
 Why does this file exist, and why __main__? For more info, read:
