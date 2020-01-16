@@ -16,6 +16,12 @@ def test_download():
     assert result
 
 
+def test_python():
+    runner = CliRunner()
+    result = runner.invoke(generate_python, """ -n nfe -v v4.00""")
+    assert result
+
+
 def test_odoo():
     runner = CliRunner()
     result = runner.invoke(generate_odoo, """ -n nfe -v v4.00""")
