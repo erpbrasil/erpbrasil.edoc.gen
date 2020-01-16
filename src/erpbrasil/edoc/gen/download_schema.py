@@ -11,7 +11,6 @@ import sys
 @click.command()
 @click.option('-n', '--service_name', help="Service Name")
 @click.option('-v', '--version', help="Version Name")
-@click.option('-f', '--force', is_flag=True, help="force")
 @click.option('-u', '--url', multiple=True, help="List of URLs")
 @click.option('-t', 'tmp_dir', required=False, default='/tmp/',
               type=click.Path(dir_okay=True, file_okay=False, exists=True),

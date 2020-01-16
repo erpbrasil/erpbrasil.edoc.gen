@@ -102,10 +102,9 @@ def generate_file(service_name, version, output_dir, module_name, filename):
         'verbose': True,
         'class_suffixes': True,
     }, str(filename))
-    # TODO: adicionar ao arquivo sem deletar o conteúdo anterior
-    # init_file = open(output_dir + '/__init__.py', 'w+')
-    # init_file.write('from . import %s' % module_name)
-    # init_file.close()
+    init_file = open(output_dir + '/__init__.py', 'a')
+    init_file.write('from . import %s\n' % module_name)
+    init_file.close()
 
 
 @click.command()
