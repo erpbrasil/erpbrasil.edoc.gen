@@ -1,0 +1,120 @@
+from pathlib import Path
+import click
+import os
+import sys
+from generateds.odoo import gends_run_gen_odoo
+from generateds import generateDS
+
+
+def prepare(service_name, version, dest_dir):
+    dest_dir_path = os.path.join(dest_dir, 'l10n_br_spec_%s/' % service_name)
+    output_path = dest_dir_path + 'models/' + version
+    security_path = dest_dir_path + 'security/%s' % version
+
+    # shutil.rmtree(dest_dir_path)
+
+    os.makedirs(output_path, exist_ok=True)
+    output_dir = open(output_path + '/__init__.py', 'w+')
+    output_dir.close()
+
+    import_models_file = open(dest_dir_path + '__init__.py', 'w+')
+    import_models_file.write('from . import models')
+    import_models_file.close()
+
+    import_version_file = open(dest_dir_path + 'models/__init__.py', 'w+')
+    import_version_file.write('from . import %s' % version)
+    import_version_file.close()
+
+    manifest_file = open(dest_dir_path + '__manifest__.py', 'w+')
+    manifest_file.write("""
+{
+    'name': '%s spec',
+    'version': '12.0.1.0.0',
+    'author': 'Akretion, Odoo Community Association (OCA)',
+    'license': 'LGPL-3',
+    'category': 'Accounting',
+    'summary': '%s spec',
+    'depends': ['base'],
+    'data': ['security/%s/ir.model.access.csv'],
+    'installable': True,
+    'application': False,
+}
+    """ % (service_name, service_name, version))
+    manifest_file.close()
+
+    spec_models_file = open(dest_dir_path + 'models/spec_models.py', 'w+')
+    spec_models_file.write("""
+from odoo import models, fields
+
+
+class AbstractSpecMixin(models.AbstractModel):
+    _description = "Abstract Model"
+    _stack_path = ""
+    _name = 'abstract.spec.mixin'
+
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Moeda',
+        compute='_compute_currency_id',
+        default=lambda self: self.env.ref('base.BRL').id,
+    )
+
+    def _compute_currency_id(self):
+        for item in self:
+            item.currency_id = self.env.ref('base.BRL').id
+    """)
+    spec_models_file.close()
+
+    os.makedirs(security_path, exist_ok=True)
+    security_dir = open(security_path + '/ir.model.access.csv', 'w+')
+    security_dir.write('id,name,model_id:id,group_id:id,'
+                       'perm_read,perm_write,perm_create,perm_unlink')
+    security_dir.close()
+
+
+def generate_file(service_name, version, output_dir, module_name, filename):
+    gends_run_gen_odoo.generate({
+        'force': True,
+        'path': str(generateDS.__file__),
+        'schema_name': service_name,
+        'version': version,
+        'output_dir': output_dir,
+        'verbose': True,
+        'class_suffixes': True,
+    }, str(filename))
+    # TODO: adicionar ao arquivo sem deletar o conteúdo anterior
+    # init_file = open(output_dir + '/__init__.py', 'w+')
+    # init_file.write('from . import %s' % module_name)
+    # init_file.close()
+
+
+@click.command()
+@click.option('-n', '--service_name', help="Service Name")
+@click.option('-v', '--version', help="Version Name")
+@click.option('-s', '--schema_dir', help="Schema dir")
+@click.option('-d', '--dest_dir', required=False, default='/tmp/',
+              type=click.Path(dir_okay=True, file_okay=False, exists=True),
+              multiple=False, help="Directory where the files will be extract")
+def generate_odoo(service_name, version, schema_dir, dest_dir):
+    """
+
+    :param service_name:
+    :param version:
+    :param schema_dir:
+    :param dest_dir:
+    :return:
+    """
+    prepare(service_name, version, dest_dir)
+
+    output_dir = os.path.join(
+        dest_dir, 'l10n_br_spec_%s/models/%s' % (service_name, version)
+    )
+
+    for filename in Path(schema_dir + '/%s/%s' % (
+            service_name, version.replace('.', '_'))).rglob('*.xsd'):
+        module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
+        generate_file(service_name, version, output_dir, module_name, filename)
+
+
+if __name__ == "__main__":
+    sys.exit(generate_odoo())

@@ -88,6 +88,8 @@ setup(
             'erpbrasil-edoc-gen = erpbrasil.edoc.gen.cli:main',
             'erpbrasil-edoc-gen-download-schema = '
             'erpbrasil.edoc.gen.download_schema:download_schema',
+            'erpbrasil-edoc-gen-generate-odoo = '
+            'erpbrasil.edoc.gen.generate_odoo:generate_odoo',
         ]
     },
 )
