@@ -7,6 +7,18 @@ from generateds import generateDS
 
 
 def prepare(service_name, version, dest_dir):
+    """ Create the module l10n_br_spec_<service_name> with the structure:
+    l10n_br_spec_<service_name>
+    |-__manifest__.py
+    |-__init__.py
+    |-models
+      |-__init__.py
+      |-spec_models.py
+      |-<version>
+    |-security
+      |-<version>
+        |-ir.model.access.csv
+    """
     dest_dir_path = os.path.join(dest_dir, 'l10n_br_spec_%s/' % service_name)
     output_path = dest_dir_path + 'models/' + version
     security_path = dest_dir_path + 'security/%s' % version
@@ -75,6 +87,10 @@ class NfeSpecMixin(models.AbstractModel):
 
 
 def generate_file(service_name, version, output_dir, module_name, filename):
+    """ Generate the odoo model for the xsd passed by filename
+    To further information see the implementation of
+    gends_run_gen_odoo.generate"""
+
     gends_run_gen_odoo.generate({
         'force': True,
         'path': str(generateDS.__file__),
@@ -98,12 +114,13 @@ def generate_file(service_name, version, output_dir, module_name, filename):
               type=click.Path(dir_okay=True, file_okay=False, exists=True),
               multiple=False, help="Directory where the files will be extract")
 def generate_odoo(service_name, version, schema_dir, dest_dir):
-    """
+    """ Create a module in the path dest_dir and generates the odoo class for
+    each xsd found in the path schema_dir
 
-    :param service_name:
-    :param version:
-    :param schema_dir:
-    :param dest_dir:
+    :param service_name: for example nfe
+    :param version: v4.00
+    :param schema_dir: /tmp/schemas
+    :param dest_dir: /tmp/generated_specs
     :return:
     """
     prepare(service_name, version, dest_dir)
