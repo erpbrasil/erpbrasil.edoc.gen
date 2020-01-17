@@ -95,7 +95,6 @@ def generate_file(
         f.write(DOCS_MODULE_DOCUMENTATION % module_name)
 
 
-
 @click.command()
 @click.option('-n', '--service_name', help="Service Name")
 @click.option('-v', '--version', help="Version Name")
@@ -105,7 +104,9 @@ def generate_file(
               default='/tmp/generated_odoo',
               type=click.Path(dir_okay=True, file_okay=False, exists=True),
               multiple=False, help="Directory where the files will be extract")
-def generate_python(service_name, version, schema_dir, force, dest_dir):
+@click.option('-i', '--file_filter', help="File Filter", default='')
+def generate_python(service_name, version, schema_dir, force, dest_dir,
+                    file_filter):
     """ Create a module in the path dest_dir and generates the python lib for
     each xsd found in the path schema_dir
 
@@ -122,8 +123,18 @@ def generate_python(service_name, version, schema_dir, force, dest_dir):
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     output_path = os.path.join(dest_dir_path, version)
 
-    for filename in Path(schema_dir + '/%s/%s' % (
-            service_name, version.replace('.', '_'))).rglob('*.xsd'):
+    filenames = []
+    if file_filter:
+        for pattern in file_filter.strip('\'').split('|'):
+            filenames += [file for file in Path(schema_dir + '/%s/%s' % (
+                service_name, version.replace('.', '_')
+            )).rglob(pattern + '*.xsd')]
+    else:
+        filenames = [file for file in Path(schema_dir + '/%s/%s' % (
+            service_name, version.replace('.', '_')
+        )).rglob('*.xsd')]
+
+    for filename in filenames:
         module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
         generate_file(service_name, version, output_path,
                       module_name, filename, dest_dir)
