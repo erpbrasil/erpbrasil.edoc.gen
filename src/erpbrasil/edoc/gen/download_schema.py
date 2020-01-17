@@ -12,8 +12,8 @@ import sys
 @click.option('-n', '--service_name', help="Service Name")
 @click.option('-v', '--version', help="Version Name")
 @click.option('-u', '--url', multiple=True, help="List of URLs")
-@click.option('-t', 'tmp_dir', required=False, default='/tmp/',
-              type=click.Path(dir_okay=True, file_okay=False, exists=True),
+@click.option('-t', 'tmp_dir', required=False, default='/tmp/generated',
+              type=click.Path(dir_okay=True, file_okay=False, exists=False),
               multiple=False, help="Directory where the files will be extract")
 def download_schema(service_name, version, url, tmp_dir):
     """ Download a list of schemas of the same service, extract it in order
@@ -30,6 +30,8 @@ def download_schema(service_name, version, url, tmp_dir):
         version,
         tmp_dir,
     ))
+
+    os.makedirs(tmp_dir, exist_ok=True)
 
     for u in url:
         click.echo("Fetching url: {}".format(u))
