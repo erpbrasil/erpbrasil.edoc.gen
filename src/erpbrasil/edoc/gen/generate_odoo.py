@@ -3,8 +3,8 @@ from pathlib import Path
 import click
 import os
 import sys
-from generateds.odoo import gends_run_gen_odoo
-from generateds import generateDS
+from odoo import gends_run_gen_odoo
+import generateDS
 
 
 def prepare(service_name, version, dest_dir, force):

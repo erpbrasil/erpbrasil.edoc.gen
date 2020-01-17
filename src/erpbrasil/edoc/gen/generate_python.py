@@ -4,8 +4,8 @@ import click
 import os
 import sys
 import re
-from generateds.process_includes import main as main_process_includes
-from generateds.generateDS import main as main_generateDS
+from process_includes import main as main_process_includes
+from generateDS import main as main_generateDS
 
 
 
