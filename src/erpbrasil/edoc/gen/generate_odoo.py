@@ -53,7 +53,7 @@ def prepare(service_name, version, dest_dir, force):
     'installable': True,
     'application': False,
 }
-    """ % (service_name, service_name, version))
+""" % (service_name, service_name, version))
     manifest_file.close()
 
     spec_models_file = open(dest_dir_path + 'models/spec_models.py', 'w+')
@@ -78,7 +78,7 @@ class NfeSpecMixin(models.AbstractModel):
     def _compute_brl_currency_id(self):
         for item in self:
             item.currency_id = self.env.ref('base.BRL').id
-    """)
+""")
     spec_models_file.close()
 
     os.makedirs(security_path, exist_ok=True)
@@ -132,7 +132,7 @@ def generate_odoo(
     :param file_filter: Regex to filter xsd files
     :return:
     """
-
+    version = version.replace('.', '_')
     os.makedirs(dest_dir, exist_ok=True)
 
     prepare(service_name, version, dest_dir, force)
@@ -145,11 +145,11 @@ def generate_odoo(
     if file_filter:
         for pattern in file_filter.strip('\'').split('|'):
             filenames += [file for file in Path(schema_dir + '/%s/%s' % (
-                service_name, version.replace('.', '_')
+                service_name, version
             )).rglob(pattern + '*.xsd')]
     else:
         filenames = [file for file in Path(schema_dir + '/%s/%s' % (
-            service_name, version.replace('.', '_')
+            service_name, version
         )).rglob('*.xsd')]
 
     for filename in filenames:
