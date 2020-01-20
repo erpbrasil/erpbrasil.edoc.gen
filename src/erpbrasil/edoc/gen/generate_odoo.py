@@ -109,7 +109,8 @@ def generate_file(service_name, version, output_dir, module_name, filename):
 
 
 def finish(output_dir):
-    shutil.rmtree(os.path.join(output_dir, '__pycache__'))
+    if os.path.isdir(os.path.join(output_dir, '__pycache__')):
+        shutil.rmtree(os.path.join(output_dir, '__pycache__'))
     for file in glob(os.path.join(output_dir, '*lib.py')):
         os.remove(file)
     os.remove(os.path.join(output_dir, 'generateds_definedsimpletypes.py'))
