@@ -1,3 +1,4 @@
+from glob import glob
 import shutil
 from pathlib import Path
 import click
@@ -107,6 +108,13 @@ def generate_file(service_name, version, output_dir, module_name, filename):
     init_file.close()
 
 
+def finish(output_dir):
+    shutil.rmtree(os.path.join(output_dir, '__pycache__'))
+    for file in glob(os.path.join(output_dir, '*lib.py')):
+        os.remove(file)
+    os.remove(os.path.join(output_dir, 'generateds_definedsimpletypes.py'))
+
+
 @click.command()
 @click.option('-n', '--service_name', help="Service Name")
 @click.option('-v', '--version', help="Version Name")
@@ -155,6 +163,8 @@ def generate_odoo(
     for filename in filenames:
         module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
         generate_file(service_name, version, output_dir, module_name, filename)
+
+    finish(output_dir)
 
 
 if __name__ == "__main__":
