@@ -99,7 +99,7 @@ def generate_file(
 @click.option('-n', '--service_name', help="Service Name")
 @click.option('-v', '--version', help="Version Name")
 @click.option('-s', '--schema_dir', help="Schema dir",
-              default='/tmp/generated/schema')
+              default='/tmp/generated/schemas')
 @click.option('-f', '--force', is_flag=True, help="force")
 @click.option('-d', '--dest_dir', required=False,
               default='/tmp/generated/python',

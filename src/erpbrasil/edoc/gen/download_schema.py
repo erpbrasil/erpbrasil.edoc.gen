@@ -56,7 +56,7 @@ def download_schema(service_name, version, url, tmp_dir):
         #
 
         destination_extract_dir = os.path.join(
-            tmp_dir, 'schema', service_name, version
+            tmp_dir, 'schemas', service_name, version
         ).replace('.', '_')
 
         os.makedirs(destination_extract_dir, exist_ok=True)
