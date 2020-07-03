@@ -25,7 +25,7 @@ def read(*names, **kwargs):
 
 setup(
     name='erpbrasil.edoc.gen',
-    version='0.0.0',
+    version='0.1.0',
     license='MIT',
     description='Generate Brazil Edoc with GenerateDS',
     long_description='%s\n%s' % (
