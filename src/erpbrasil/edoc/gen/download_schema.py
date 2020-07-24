@@ -39,10 +39,15 @@ def download_schema(service_name, version, url, tmp_dir):
         #
         # Get file name with extension
         #
-        value, params = cgi.parse_header(
-            remote_file.info()['Content-Disposition']
-        )
-        filename = params["filename"]
+
+        filename = os.path.basename(u)
+
+        if remote_file.info().get('Content-Disposition'):
+            value, params = cgi.parse_header(
+                remote_file.info()['Content-Disposition']
+            )
+            filename = params["filename"]
+
         file_path = os.path.join(tmp_dir, filename)
         click.echo("Downloading file to: {}".format(file_path))
         urlretrieve(u, file_path)
