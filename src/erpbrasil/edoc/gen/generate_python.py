@@ -4,9 +4,7 @@ import click
 import os
 import sys
 import re
-from process_includes import main as main_process_includes
-from generateDS import main as main_generateDS
-
+import subprocess
 
 
 DOC_CONTENT = """Module contents
@@ -64,30 +62,32 @@ def prepare(service_name, version, dest_dir, force):
 
 
 def generate_file(
-    service_name, version, output_dir, module_name, filename, dest_dir):
+    service_name, version, output_dir, module_name, filename, dest_dir, schema_version_dir):
     """ Generate the odoo model for the xsd passed by filename
     To further information see the implementation of
     gends_run_gen_odoo.generate"""
 
-    out_process_includes_dir = str(os.path.join(
-        dest_dir, 'process_includes'))
+    out_process_includes_dir = schema_version_dir
     out_file_process_included = str(os.path.join(
-        out_process_includes_dir, module_name
+        out_process_includes_dir, "preprocessed_" + module_name
     ))
     os.makedirs(out_process_includes_dir, exist_ok=True)
 
-    main_process_includes(
-        ['--no-collect-includes', '-f', str(filename),
-         out_file_process_included])
-
+    subprocess.check_output([
+        'process_includes.py',
+        '--no-collect-includes', '-f', str(filename),
+         out_file_process_included], cwd=schema_version_dir)
     out_file_generated = os.path.join(
         output_dir, module_name.replace('.xsd', '.py'))
 
-    main_generateDS(
-        ['--no-namespace-defs', '--no-collect-includes',
+    subprocess.check_output(
+        ['generateDS.py',
+         '--no-namespace-defs', '--no-collect-includes',
          '--use-getter-setter=none', '-f', '-o',
-         out_file_generated, out_file_process_included])
+         out_file_generated, out_file_process_included], cwd=schema_version_dir)
 
+
+    os.remove(os.path.join(schema_version_dir, out_file_process_included))
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     doc_path = os.path.join(dest_dir_path, 'docs')
 
@@ -125,22 +125,21 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
     version = version.replace('.', '_')
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     output_path = os.path.join(dest_dir_path, version)
-
+    schema_version_dir = schema_dir + '/%s/%s' % (service_name, version.replace('.', '_'),)
+ 
     filenames = []
     if file_filter:
         for pattern in file_filter.strip('\'').split('|'):
-            filenames += [file for file in Path(schema_dir + '/%s/%s' % (
-                service_name, version.replace('.', '_')
-            )).rglob(pattern + '*.xsd')]
+            filenames += [file for file in Path(schema_version_dir
+            ).rglob(pattern + '*.xsd')]
     else:
-        filenames = [file for file in Path(schema_dir + '/%s/%s' % (
-            service_name, version.replace('.', '_')
-        )).rglob('*.xsd')]
+        filenames = [file for file in Path(schema_version_dir
+        ).rglob('*.xsd')]
 
     for filename in filenames:
         module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
         generate_file(service_name, version, output_path,
-                      module_name, filename, dest_dir)
+                      module_name, filename, dest_dir, schema_version_dir)
 
 
 if __name__ == "__main__":
