@@ -145,6 +145,12 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
             generate_file(service_name, version, output_path,
                           module_name, filename, dest_dir, schema_version_dir)
 
+    src_dir = os.path.join(dest_dir, 'src', 'nfe')
+    if os.path.isdir(src_dir):
+        for item in os.listdir(src_dir):
+            s = os.path.join(src_dir, item)
+            d = os.path.join(output_path, item)
+            shutil.copy2(s, d)
 
 if __name__ == "__main__":
     sys.exit(generate_python())
