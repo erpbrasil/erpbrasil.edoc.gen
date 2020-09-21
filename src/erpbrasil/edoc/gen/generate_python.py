@@ -17,6 +17,8 @@ DOCS_MODULE_DOCUMENTATION = """.. automodule:: %s
     :show-inheritance:
 """
 
+FILE_SKIP = ['^tipos.*', '^xmldsig.*']
+
 
 def prepare(service_name, version, dest_dir, force):
     """ Create the module l10n_br_spec_<service_name> with the structure:
@@ -78,7 +80,7 @@ def generate_file(
         '--no-collect-includes', '-f', str(filename),
          out_file_process_included], cwd=schema_version_dir)
     out_file_generated = os.path.join(
-        output_dir, module_name.replace('.xsd', '.py'))
+        output_dir, "%s.py" % (module_name,))
 
     subprocess.check_output(
         ['generateDS.py',
@@ -138,9 +140,10 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
         ).rglob('*.xsd')]
 
     for filename in filenames:
-        module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
-        generate_file(service_name, version, output_path,
-                      module_name, filename, dest_dir, schema_version_dir)
+        module_name = str(filename).split('/')[-1].split('_v')[0]
+        if not any(re.search(pattern, module_name) for pattern in FILE_SKIP):
+            generate_file(service_name, version, output_path,
+                          module_name, filename, dest_dir, schema_version_dir)
 
 
 if __name__ == "__main__":
