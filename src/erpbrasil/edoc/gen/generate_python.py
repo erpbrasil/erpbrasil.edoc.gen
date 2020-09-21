@@ -82,10 +82,11 @@ def generate_file(
 
     subprocess.check_output(
         ['generateDS.py',
-         '--no-namespace-defs', '--no-collect-includes',
+         '--no-namespace-defs',
+         #'--no-collect-includes',
+         '--member-specs', 'list',
          '--use-getter-setter=none', '-f', '-o',
          out_file_generated, out_file_process_included], cwd=schema_version_dir)
-
 
     os.remove(os.path.join(schema_version_dir, out_file_process_included))
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
@@ -126,7 +127,7 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     output_path = os.path.join(dest_dir_path, version)
     schema_version_dir = schema_dir + '/%s/%s' % (service_name, version.replace('.', '_'),)
- 
+
     filenames = []
     if file_filter:
         for pattern in file_filter.strip('\'').split('|'):
