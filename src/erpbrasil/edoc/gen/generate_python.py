@@ -75,20 +75,22 @@ def generate_file(
     ))
     os.makedirs(out_process_includes_dir, exist_ok=True)
 
-    subprocess.check_output([
-        'process_includes.py',
+    preprocess_args = ['process_includes.py',
         '--no-collect-includes', '-f', str(filename),
-         out_file_process_included], cwd=schema_version_dir)
+         out_file_process_included]
+    print("\n%s" % (" ".join(preprocess_args),))
+    subprocess.check_output(preprocess_args, cwd=schema_version_dir)
     out_file_generated = os.path.join(
         output_dir, "%s.py" % (module_name,))
 
-    subprocess.check_output(
-        ['generateDS.py',
+    gends_args = ['generateDS.py',
          '--no-namespace-defs',
          #'--no-collect-includes',
          '--member-specs', 'list',
          '--use-getter-setter=none', '-f', '-o',
-         out_file_generated, out_file_process_included], cwd=schema_version_dir)
+         out_file_generated, out_file_process_included]
+    print(" ".join(gends_args))
+    subprocess.check_output(gends_args, cwd=schema_version_dir)
 
     os.remove(os.path.join(schema_version_dir, out_file_process_included))
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
