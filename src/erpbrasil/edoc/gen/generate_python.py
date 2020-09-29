@@ -116,6 +116,7 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
     :param dest_dir: /tmp/generated_specs
     :return:
     """
+    dest_dir = os.path.abspath(dest_dir)
     os.makedirs(dest_dir, exist_ok=True)
 
     prepare(service_name, version, dest_dir, force)
