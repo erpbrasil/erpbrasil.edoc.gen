@@ -21,17 +21,13 @@ FILE_SKIP = ['^tipos.*', '^xmldsig.*']
 
 
 def prepare(service_name, version, dest_dir, force):
-    """ Create the module l10n_br_spec_<service_name> with the structure:
-    l10n_br_spec_<service_name>
-    |-__manifest__.py
+    """ Create the Python lib structure:
+    lib_<service_name>
     |-__init__.py
-    |-models
+    |-version
       |-__init__.py
-      |-spec_models.py
-      |-<version>
-    |-security
-      |-<version>
-        |-ir.model.access.csv
+      |-generated_models.py
+      |-custom_gends_overrides.py
     """
     version = version.replace('.', '_')
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
