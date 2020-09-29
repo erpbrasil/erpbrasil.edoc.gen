@@ -71,7 +71,7 @@ def generate_file(
 
     out_process_includes_dir = schema_version_dir
     out_file_process_included = str(os.path.join(
-        out_process_includes_dir, "preprocessed_" + module_name
+        out_process_includes_dir, "pre_%s.xsd" % (module_name,)
     ))
     os.makedirs(out_process_includes_dir, exist_ok=True)
 
