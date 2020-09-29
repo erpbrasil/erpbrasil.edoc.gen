@@ -15,25 +15,25 @@ Overview
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-.. |docs| image:: https://readthedocs.org/projects/erpbrail.edoc.gen/badge/?style=flat
-    :target: https://readthedocs.org/projects/erpbrailedocgen
+.. |docs| image:: https://readthedocs.org/projects/erpbrasil.edoc.gen/badge/?style=flat
+    :target: https://readthedocs.org/projects/erpbrasiledocgen
     :alt: Documentation Status
 
-.. |travis| image:: https://api.travis-ci.org/mileo/erpbrail.edoc.gen.svg?branch=master
+.. |travis| image:: https://api.travis-ci.org/erpbrasil/erpbrasil.edoc.gen.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/mileo/erpbrail.edoc.gen
+    :target: https://travis-ci.org/erpbrasil/erpbrasil.edoc.gen
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/mileo/erpbrail.edoc.gen?branch=master&svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/erpbrasil/erpbrasil.edoc.gen?branch=master&svg=true
     :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/mileo/erpbrail.edoc.gen
+    :target: https://ci.appveyor.com/project/erpbrasil/erpbrasil.edoc.gen
 
-.. |requires| image:: https://requires.io/github/mileo/erpbrail.edoc.gen/requirements.svg?branch=master
+.. |requires| image:: https://requires.io/github/erpbrasil/erpbrasil.edoc.gen/requirements.svg?branch=master
     :alt: Requirements Status
-    :target: https://requires.io/github/mileo/erpbrail.edoc.gen/requirements/?branch=master
+    :target: https://requires.io/github/erpbrasil/erpbrasil.edoc.gen/requirements/?branch=master
 
-.. |codecov| image:: https://codecov.io/github/mileo/erpbrail.edoc.gen/coverage.svg?branch=master
+.. |codecov| image:: https://codecov.io/github/erpbrasil/erpbrasil.edoc.gen/coverage.svg?branch=master
     :alt: Coverage Status
-    :target: https://codecov.io/github/mileo/erpbrail.edoc.gen
+    :target: https://codecov.io/github/erpbrasil/erpbrasil.edoc.gen
 
 .. |version| image:: https://img.shields.io/pypi/v/erpbrasil.edoc.gen.svg
     :alt: PyPI Package latest release
@@ -51,9 +51,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/erpbrasil.edoc.gen
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/mileo/erpbrail.edoc.gen/v0.1.0.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/erpbrasil/erpbrasil.edoc.gen/v0.1.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/mileo/erpbrail.edoc.gen/compare/v0.1.0...master
+    :target: https://github.com/erpbrasil/erpbrasil.edoc.gen/compare/v0.1.0...master
 
 
 
@@ -72,14 +72,14 @@ Installation
 
 You can also install the in-development version with::
 
-    pip install https://github.com/mileo/erpbrail.edoc.gen/archive/master.zip
+    pip install https://github.com/erpbrasil/erpbrasil.edoc.gen/archive/master.zip
 
 
 Documentation
 =============
 
 
-https://erpbrailedocgen.readthedocs.io/
+https://erpbrasiledocgen.readthedocs.io/
 
 
 Development
