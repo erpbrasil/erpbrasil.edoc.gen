@@ -4,8 +4,8 @@ from pathlib import Path
 import click
 import os
 import sys
-from odoo import gends_run_gen_odoo
-import generateDS
+#from odoo import gends_run_gen_odoo
+#import generateDS
 
 
 def prepare(service_name, version, dest_dir, force):
@@ -17,13 +17,9 @@ def prepare(service_name, version, dest_dir, force):
       |-__init__.py
       |-spec_models.py
       |-<version>
-    |-security
-      |-<version>
-        |-ir.model.access.csv
     """
-    dest_dir_path = os.path.join(dest_dir, 'l10n_br_spec_%s/' % service_name)
+    dest_dir_path = os.path.join(dest_dir, 'l10n_br_%s_spec/' % service_name)
     output_path = dest_dir_path + 'models/' + version
-    security_path = dest_dir_path + 'security/%s' % version
 
     if force and os.path.isdir(dest_dir_path):
         shutil.rmtree(dest_dir_path)
@@ -50,11 +46,10 @@ def prepare(service_name, version, dest_dir, force):
     'category': 'Accounting',
     'summary': '%s spec',
     'depends': ['base'],
-    'data': ['security/%s/ir.model.access.csv'],
     'installable': True,
     'application': False,
 }
-""" % (service_name, service_name, version))
+""" % (service_name, service_name))
     manifest_file.close()
 
     spec_models_file = open(dest_dir_path + 'models/spec_models.py', 'w+')
@@ -81,13 +76,6 @@ class NfeSpecMixin(models.AbstractModel):
             item.currency_id = self.env.ref('base.BRL').id
 """)
     spec_models_file.close()
-
-    os.makedirs(security_path, exist_ok=True)
-    security_dir = open(security_path + '/ir.model.access.csv', 'w+')
-    security_dir.write('id,name,model_id:id,group_id:id,'
-                       'perm_read,perm_write,perm_create,perm_unlink')
-    security_dir.close()
-
 
 def generate_file(service_name, version, output_dir, module_name, filename):
     """ Generate the odoo model for the xsd passed by filename
@@ -147,7 +135,7 @@ def generate_odoo(
     prepare(service_name, version, dest_dir, force)
 
     output_dir = os.path.join(
-        dest_dir, 'l10n_br_spec_%s/models/%s' % (service_name, version)
+        dest_dir, 'l10n_br_%s_spec/models/%s' % (service_name, version)
     )
 
     filenames = []
@@ -161,11 +149,11 @@ def generate_odoo(
             service_name, version
         )).rglob('*.xsd')]
 
-    for filename in filenames:
-        module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
-        generate_file(service_name, version, output_dir, module_name, filename)
+#    for filename in filenames:
+#        module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
+#        generate_file(service_name, version, output_dir, module_name, filename)
 
-    finish(output_dir)
+#    finish(output_dir)
 
 
 if __name__ == "__main__":
