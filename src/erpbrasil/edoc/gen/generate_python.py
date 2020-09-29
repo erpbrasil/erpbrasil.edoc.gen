@@ -63,8 +63,8 @@ def prepare(service_name, version, dest_dir, force):
             ))
 
 
-def generate_file(
-    service_name, version, output_dir, module_name, filename, dest_dir, schema_version_dir):
+def generate_file(service_name, version, output_dir, module_name, filename,
+        dest_dir, schema_version_dir):
     """ Generate the odoo model for the xsd passed by filename
     To further information see the implementation of
     gends_run_gen_odoo.generate"""
@@ -75,24 +75,17 @@ def generate_file(
     ))
     os.makedirs(out_process_includes_dir, exist_ok=True)
 
-    preprocess_args = ['process_includes.py',
-        '--no-collect-includes', '-f', str(filename),
-         out_file_process_included]
-    print("\n%s" % (" ".join(preprocess_args),))
-    subprocess.check_output(preprocess_args, cwd=schema_version_dir)
     out_file_generated = os.path.join(
         output_dir, "%s.py" % (module_name,))
 
     gends_args = ['generateDS.py',
          '--no-namespace-defs',
-         #'--no-collect-includes',
          '--member-specs', 'list',
          '--use-getter-setter=none', '-f', '-o',
-         out_file_generated, out_file_process_included]
+         out_file_generated, str(filename)]
     print(" ".join(gends_args))
     subprocess.check_output(gends_args, cwd=schema_version_dir)
 
-    os.remove(os.path.join(schema_version_dir, out_file_process_included))
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     doc_path = os.path.join(dest_dir_path, 'docs')
 
@@ -130,7 +123,8 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
     version = version.replace('.', '_')
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     output_path = os.path.join(dest_dir_path, version)
-    schema_version_dir = schema_dir + '/%s/%s' % (service_name, version.replace('.', '_'),)
+    schema_version_dir = schema_dir + '/%s/%s' % (service_name,
+            version.replace('.', '_'),)
 
     filenames = []
     if file_filter:
@@ -138,8 +132,7 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
             filenames += [file for file in Path(schema_version_dir
             ).rglob(pattern + '*.xsd')]
     else:
-        filenames = [file for file in Path(schema_version_dir
-        ).rglob('*.xsd')]
+        filenames = [f for f in Path(schema_version_dir).rglob('*.xsd')]
 
     for filename in filenames:
         module_name = str(filename).split('/')[-1].split('_v')[0]
