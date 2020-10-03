@@ -26,7 +26,7 @@ def prepare(service_name, version, dest_dir, force):
     |-__init__.py
     |-version
       |-__init__.py
-      |-generated_models.py
+      |-generated_bindings.py
       |-custom_gends_overrides.py
     """
     version = version.replace('.', '_')
@@ -76,6 +76,7 @@ def generate_file(service_name, version, output_dir, module_name, filename,
 
     gends_args = ['generateDS.py',
          '--no-namespace-defs',
+         '--no-dates',
          '--member-specs', 'list',
          '--use-getter-setter=none', '-f', '-o',
          out_file_generated, str(filename)]
