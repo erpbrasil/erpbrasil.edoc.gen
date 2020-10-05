@@ -4,9 +4,7 @@ import click
 import os
 import sys
 import re
-from process_includes import main as main_process_includes
-from generateDS import main as main_generateDS
-
+import subprocess
 
 
 DOC_CONTENT = """Module contents
@@ -19,19 +17,17 @@ DOCS_MODULE_DOCUMENTATION = """.. automodule:: %s
     :show-inheritance:
 """
 
+FILE_SKIP = ['^tipos.*', '^xmldsig.*']
+
 
 def prepare(service_name, version, dest_dir, force):
-    """ Create the module l10n_br_spec_<service_name> with the structure:
-    l10n_br_spec_<service_name>
-    |-__manifest__.py
+    """ Create the Python lib structure:
+    lib_<service_name>
     |-__init__.py
-    |-models
+    |-version
       |-__init__.py
-      |-spec_models.py
-      |-<version>
-    |-security
-      |-<version>
-        |-ir.model.access.csv
+      |-generated_bindings.py
+      |-custom_gends_overrides.py
     """
     version = version.replace('.', '_')
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
@@ -63,30 +59,29 @@ def prepare(service_name, version, dest_dir, force):
             ))
 
 
-def generate_file(
-    service_name, version, output_dir, module_name, filename, dest_dir):
+def generate_file(service_name, version, output_dir, module_name, filename,
+        dest_dir, schema_version_dir):
     """ Generate the odoo model for the xsd passed by filename
     To further information see the implementation of
     gends_run_gen_odoo.generate"""
 
-    out_process_includes_dir = str(os.path.join(
-        dest_dir, 'process_includes'))
+    out_process_includes_dir = schema_version_dir
     out_file_process_included = str(os.path.join(
-        out_process_includes_dir, module_name
+        out_process_includes_dir, "pre_%s.xsd" % (module_name,)
     ))
     os.makedirs(out_process_includes_dir, exist_ok=True)
 
-    main_process_includes(
-        ['--no-collect-includes', '-f', str(filename),
-         out_file_process_included])
-
     out_file_generated = os.path.join(
-        output_dir, module_name.replace('.xsd', '.py'))
+        output_dir, "%s.py" % (module_name,))
 
-    main_generateDS(
-        ['--no-namespace-defs', '--no-collect-includes',
+    gends_args = ['generateDS.py',
+         '--no-namespace-defs',
+         '--no-dates',
+         '--member-specs', 'list',
          '--use-getter-setter=none', '-f', '-o',
-         out_file_generated, out_file_process_included])
+         out_file_generated, str(filename)]
+    print(" ".join(gends_args))
+    subprocess.check_output(gends_args, cwd=schema_version_dir)
 
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     doc_path = os.path.join(dest_dir_path, 'docs')
@@ -118,6 +113,7 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
     :param dest_dir: /tmp/generated_specs
     :return:
     """
+    dest_dir = os.path.abspath(dest_dir)
     os.makedirs(dest_dir, exist_ok=True)
 
     prepare(service_name, version, dest_dir, force)
@@ -125,23 +121,29 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
     version = version.replace('.', '_')
     dest_dir_path = os.path.join(dest_dir, '%slib/' % service_name)
     output_path = os.path.join(dest_dir_path, version)
+    schema_version_dir = schema_dir + '/%s/%s' % (service_name,
+            version.replace('.', '_'),)
 
     filenames = []
     if file_filter:
         for pattern in file_filter.strip('\'').split('|'):
-            filenames += [file for file in Path(schema_dir + '/%s/%s' % (
-                service_name, version.replace('.', '_')
-            )).rglob(pattern + '*.xsd')]
+            filenames += [file for file in Path(schema_version_dir
+            ).rglob(pattern + '*.xsd')]
     else:
-        filenames = [file for file in Path(schema_dir + '/%s/%s' % (
-            service_name, version.replace('.', '_')
-        )).rglob('*.xsd')]
+        filenames = [f for f in Path(schema_version_dir).rglob('*.xsd')]
 
     for filename in filenames:
-        module_name = str(filename).split('/')[-1].split('_%s' % version)[0]
-        generate_file(service_name, version, output_path,
-                      module_name, filename, dest_dir)
+        module_name = str(filename).split('/')[-1].split('_v')[0]
+        if not any(re.search(pattern, module_name) for pattern in FILE_SKIP):
+            generate_file(service_name, version, output_path,
+                          module_name, filename, dest_dir, schema_version_dir)
 
+    src_dir = os.path.join(dest_dir, 'src', service_name)
+    if os.path.isdir(src_dir):
+        for item in os.listdir(src_dir):
+            s = os.path.join(src_dir, item)
+            d = os.path.join(output_path, item)
+            shutil.copy2(s, d)
 
 if __name__ == "__main__":
     sys.exit(generate_python())
