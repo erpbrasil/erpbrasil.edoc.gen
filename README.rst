@@ -107,6 +107,7 @@ Usage
           -f, --force               force
           -d, --dest_dir DIRECTORY  Directory where the files will be extract
           -i, --file_filter TEXT    File Filter
+          -m, --main-package TEXT   Main package
           --help                    Show this message and exit.
 
 * Free software: MIT license
@@ -116,6 +117,10 @@ Example for the Brazilian NFe
 =============================
 
 https://github.com/erpbrasil/nfelib
+
+Example for the NFS-e GINFES
+
+https://github.com/erpbrasil/nfselib/blob/master/scripts/ginfes.sh
 
 
 Installation

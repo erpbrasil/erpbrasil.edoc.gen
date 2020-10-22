@@ -101,8 +101,9 @@ def generate_file(service_name, version, output_dir, module_name, filename,
               type=click.Path(dir_okay=True, file_okay=False, exists=False),
               multiple=False, help="Directory where the files will be extract")
 @click.option('-i', '--file_filter', help="File Filter", default='')
+@click.option('-m', '--main-package', help="Main package", required=False)
 def generate_python(service_name, version, schema_dir, force, dest_dir,
-                    file_filter):
+                    file_filter, main_package):
     """ Create a module in the path dest_dir and generates the python lib for
     each xsd found in the path schema_dir
 
@@ -144,6 +145,12 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
             s = os.path.join(src_dir, item)
             d = os.path.join(output_path, item)
             shutil.copy2(s, d)
+
+    if main_package and os.path.isdir(dest_dir):
+        new_path = os.path.join(dest_dir, '%slib/' % main_package)
+        os.makedirs(new_path, exist_ok=True)
+        shutil.move(dest_dir_path, dest_dir_path[:-4])
+        shutil.move(dest_dir_path[:-4], new_path)
 
 if __name__ == "__main__":
     sys.exit(generate_python())
