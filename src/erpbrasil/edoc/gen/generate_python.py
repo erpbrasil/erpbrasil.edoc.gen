@@ -143,8 +143,11 @@ def generate_python(service_name, version, schema_dir, force, dest_dir,
     if os.path.isdir(src_dir):
         for item in os.listdir(src_dir):
             s = os.path.join(src_dir, item)
-            d = os.path.join(output_path, item)
-            shutil.copy2(s, d)
+            d = os.path.join(dest_dir_path, item)
+            if os.path.isdir(s):
+                shutil.copytree(s, d, dirs_exist_ok=True)
+            else:
+                shutil.copy2(s, d)
 
     if main_package and os.path.isdir(dest_dir):
         new_path = os.path.join(dest_dir, '%slib/' % main_package)
