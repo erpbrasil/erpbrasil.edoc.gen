@@ -54,6 +54,13 @@ def download_schema(service_name, version, url, tmp_dir):
         #
         # Exaction
         #
+
+        # Ensure that the file name is in lower case
+        file_path_lower = os.path.join(tmp_dir, filename.lower())
+        if file_path != file_path_lower:
+            shutil.move(file_path, file_path_lower)
+            file_path = file_path_lower
+
         extract_dir = os.path.join(tmp_dir, 'extract_schema')
         shutil.unpack_archive(file_path, extract_dir)
         #
