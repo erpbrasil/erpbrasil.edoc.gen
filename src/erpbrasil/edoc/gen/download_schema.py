@@ -48,7 +48,7 @@ def download_schema(service_name, version, url, tmp_dir):
             )
             filename = params["filename"]
 
-        file_path = os.path.join(tmp_dir, filename)
+        file_path = os.path.join(tmp_dir, filename.replace('.ZIP', '.zip'))
         click.echo("Downloading file to: {}".format(file_path))
         urlretrieve(u, file_path)
         #
